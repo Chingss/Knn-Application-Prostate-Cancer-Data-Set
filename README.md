@@ -1,0 +1,2 @@
+# Knn-Application-Prostate-Cancer-Data-Set
+ the test data cosisted of 35  observations. Out of which5 cases have been accurately predicted (TN = true negative) # as Benign (B) in nature which constitutes 14.3 %. Also 16 out of 35 observations were accurately predicted # (TP -> true Positives) as Malignant (M) in  nature which constitutes 45.7%. Thus a total 16 out of 35  predictions # where TP i.e.. true positive in nature.
