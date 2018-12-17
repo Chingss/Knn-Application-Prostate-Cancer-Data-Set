@@ -1,0 +1,85 @@
+setwd("C:/Users/DELL PC/Desktop/Analytix Lab/R/Exploration/KNN")
+
+prc <- read.csv("Prostate_Cancer.csv", stringsAsFactors = FALSE)
+
+str(prc)
+
+head(prc)
+# the first variable ‘id’ is unique in nature and can be removed as it does not provide useful information.
+prc <- prc[-1]
+
+table(prc$diagnosis_result) # to see the number of patients
+
+# diagnosis_result is our y variable 
+# i.e. this variable will determine the results of the diagnosis based on the 8 numeric variables
+
+# to rename B as "Benign" and M as "Malignant" and see the result in percentage form
+
+prc$diagnosis <- factor(prc$diagnosis_result,levels = c("B","M"), labels = c("Benign", "Malignant"))
+
+round(prop.table(table(prc$diagnosis))*100,digits = 1)
+
+# normalizing the data  into one scale 
+
+normalize <- function(x){
+  return((x-min(x))/(max(x)-min(x)))
+}
+
+prc_n <- as.data.frame(lapply(prc[2:9],normalize))
+
+summary(prc_n$radius)
+
+summary(prc_n$perimeter)
+summary(prc_n$area)
+
+
+# creating Training and testing 
+
+prc_train <- prc_n[1:65,]
+
+prc_test <- prc_n[66:100,]
+
+
+prc_train_labels <- prc[1:65,1]
+prc_test_labels <- prc[66:100,1]
+#This code takes the diagnosis factor in column 1 of 
+#the prc data frame and on turn creates prc_train_labels and prc_test_labels data frame.
+#
+
+# 3 training a model on data
+
+install.packages("class")
+library(class)
+
+#4 Now we are ready to use the knn() function to classify test data
+
+prc_test_pred <- knn(train = prc_train, test = prc_test,cl = prc_train_labels, k = 10)
+
+
+library(gmodels)
+
+CrossTable(x = prc_test_labels, y = prc_test_labels,prop.chisq = FALSE)
+
+# the test data cosisted of 35  observations. Out of which5 cases have been accurately predicted (TN = true negative)
+# as Benign (B) in nature which constitutes 14.3 %. Also 16 out of 35 observations were accurately predicted
+# (TP -> true Positives) as Malignant (M) in  nature which constitutes 45.7%. Thus a total 16 out of 35  predictions
+# where TP i.e.. true positive in nature.
+# 
+# There were no cases of False Negative (FN)  meaning no cases were recorded which actually are malignant in nature
+#but got predicted as Benign. the FN's if any poses a potential threat for the same reason and the main
+#focus to increase the acccuracy pf the model is to reduce FN's
+#
+#There were 14 cases of false Positives (FP) meaning 14 cases were actually benign in nature but got predicted 
+#as malignant 
+#
+#the total accuracy of model is 60% (TN+TP)/35 which shows that there may be chances to improve model performance
+ 
+
+# improvemnt of performance of the model 
+
+# this Can be taken into account by repeating the steps 3 and 4 and by changing the k value 
+# it is the square root of the observations and in this case we took k=10 which is a 
+# perfect square root of 100.The k-value may be fluctuated in and around 
+# the value of 10 to check the increased accuracy of the model. 
+# Do try it out with values of your choice to increase the accuracy! Also remember, 
+# to keep the value of FN’s as low as possible.
